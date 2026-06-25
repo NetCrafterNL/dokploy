@@ -327,6 +327,30 @@ export const ShowProjects = () => {
 
 											const hasNoEnvironments = !accessibleEnvironment;
 
+
+											const allStatuses: (string | null | undefined)[] = [];
+											for (const env of project.environments) {
+												for (const a of env.applications) allStatuses.push(a.applicationStatus);
+												for (const c of env.compose) allStatuses.push(c.composeStatus);
+												for (const db of [...(env.libsql ?? []), ...(env.mariadb ?? []), ...(env.mongo ?? []), ...(env.mysql ?? []), ...(env.postgres ?? []), ...(env.redis ?? [])]) allStatuses.push((db as any).applicationStatus);
+											}
+											const hasError = allStatuses.some(s => s === "error");
+											const hasRunning = allStatuses.some(s => s === "done");
+											const hasDeploying = allStatuses.some(s => s === "running");
+											const appDotColor = allStatuses.length === 0
+												? "bg-muted-foreground/40"
+												: hasError ? "bg-red-500"
+												: hasDeploying ? "bg-orange-400"
+												: hasRunning ? "bg-green-500"
+												: "bg-muted-foreground/40";
+											const appDotTitle = allStatuses.length === 0 ? "No services" : hasError ? "Error" : hasDeploying ? "Deploying" : hasRunning ? "Running" : "Idle";
+											const hasDomains = project.environments.some(env =>
+												env.applications?.some(a => (a as any).domains?.length > 0) ||
+												env.compose?.some(c => (c as any).domains?.length > 0)
+											);
+											const dnsDotColor = hasDomains ? "bg-green-500" : "bg-muted-foreground/40";
+											const dnsDotTitle = hasDomains ? "Domains configured" : "No domains";
+
 											return (
 												<div
 													key={project.projectId}
@@ -502,6 +526,10 @@ export const ShowProjects = () => {
 																			? "service"
 																			: "services"}
 																	</span>
+																	<div className="flex items-center gap-2 ml-auto">
+																		<div title={appDotTitle} className={`size-2.5 rounded-full ${appDotColor}`} />
+																		<div title={dnsDotTitle} className={`size-2.5 rounded-full ${dnsDotColor}`} />
+																	</div>
 																</div>
 															</CardFooter>
 														</Card>

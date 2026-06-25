@@ -232,6 +232,11 @@ export const projectRouter = createTRPCRouter({
 									name: true,
 									applicationStatus: true,
 								},
+							with: {
+								domains: {
+									columns: { domainId: true, host: true, https: true },
+								},
+							},
 							},
 							libsql: {
 								where: buildServiceFilter(libsql.libsqlId, accessedServices),
@@ -291,6 +296,11 @@ export const projectRouter = createTRPCRouter({
 									name: true,
 									composeStatus: true,
 								},
+							with: {
+								domains: {
+									columns: { domainId: true, host: true, https: true },
+								},
+							},
 							},
 						},
 						columns: {
@@ -319,6 +329,11 @@ export const projectRouter = createTRPCRouter({
 								name: true,
 								applicationStatus: true,
 							},
+						with: {
+							domains: {
+								columns: { domainId: true, host: true, https: true },
+							},
+						},
 						},
 						mariadb: {
 							columns: {
@@ -351,6 +366,11 @@ export const projectRouter = createTRPCRouter({
 								name: true,
 								composeStatus: true,
 							},
+						with: {
+							domains: {
+								columns: { domainId: true, host: true, https: true },
+							},
+						},
 						},
 						libsql: {
 							columns: {
